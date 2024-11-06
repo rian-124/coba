@@ -27,6 +27,7 @@ jobs:
           --health-interval=5s
           --health-timeout=5s
           --health-retries=3
+          --bind-address=0.0.0.0  # Mengizinkan koneksi dari semua alamat IP
 
     steps:
     # 1. Checkout kode dari repositori
@@ -50,10 +51,14 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-interaction
 
+    # Tunggu beberapa detik agar MySQL siap
+    - name: Wait for MySQL to be ready
+      run: sleep 30  # Tunggu 30 detik sebelum menjalankan perintah SQL
+
     # 5. Membuat Tabel di MySQL sebelum pengujian
     - name: Create customers table
       run: |
-        mysql -h 127.0.0.1 -u root -prootpassword store -e "CREATE TABLE IF NOT EXISTS customers (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+        mysql -h mysql -u root -prootpassword store -e "CREATE TABLE IF NOT EXISTS customers (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
 
     # 6. Set execute permission untuk PHPUnit
     - name: Set execute permission for PHPUnit
