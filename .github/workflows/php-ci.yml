@@ -34,6 +34,10 @@ jobs:
       run: composer install --prefer-dist --no-interaction
 
     # 5. Jalankan PHPUnit untuk pengujian
+
+    - name: Set execute permission for PHPUnit
+      run: chmod +x vendor/bin/phpunit  # Menambahkan izin eksekusi
+      
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit --testdox  # Jalankan PHPUnit, pastikan PHPUnit diinstal lewat Composer
 
