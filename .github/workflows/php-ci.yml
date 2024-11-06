@@ -12,18 +12,34 @@ jobs:
   phpunit:
     runs-on: ubuntu-latest  # Menentukan bahwa job akan dijalankan di lingkungan Ubuntu
 
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: ""  # Kosongkan jika tidak pakai password
+          MYSQL_DATABASE: store
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-start-period=30s
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
     # 1. Checkout kode dari repositori
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Set up PHP versi 8.1 (sesuaikan dengan versi yang Anda pakai)
+    # 2. Set up PHP versi 8.2
     - name: Set up PHP 8.2
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'  # Tentukan versi PHP yang digunakan
+        php-version: '8.2'
+        extensions: mbstring, pdo, pdo_mysql
 
-    # 3. Install Composer (jika menggunakan Composer untuk manajemen dependensi)
+    # 3. Install Composer
     - name: Install Composer
       run: |
         curl -sS https://getcomposer.org/installer | php
@@ -33,14 +49,19 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-interaction
 
-    # 5. Jalankan PHPUnit untuk pengujian
-
+    # 5. Set execute permission untuk PHPUnit
     - name: Set execute permission for PHPUnit
-      run: chmod +x vendor/bin/phpunit  # Menambahkan izin eksekusi
-      
-    - name: Run PHPUnit tests
-      run: vendor/bin/phpunit --testdox  # Jalankan PHPUnit, pastikan PHPUnit diinstal lewat Composer
+      run: chmod +x vendor/bin/phpunit
 
-    # 6. Menampilkan pesan setelah CI selesai
+    # 6. Jalankan PHPUnit
+    - name: Run PHPUnit tests
+      run: vendor/bin/phpunit --testdox
+      env:
+        DB_HOST: 127.0.0.1  # Gunakan IP kontainer MySQL
+        DB_DATABASE: store
+        DB_USERNAME: root
+        DB_PASSWORD: ""  # Kosongkan jika tidak pakai password
+
+    # 7. Menampilkan pesan setelah CI selesai
     - name: Display CI result
       run: echo "CI pipeline completed successfully."
