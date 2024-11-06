@@ -5,7 +5,7 @@ namespace App;
 class DBConnection {
     public function connect() {
         // Gunakan IP 127.0.0.1 atau 'mysql' jika Anda memakai container MySQL dengan nama 'mysql' di GitHub Actions
-        $host = '127.0.0.1';  // Ganti 'localhost' dengan '127.0.0.1' atau nama service Docker jika menggunakan container
+        $host = 'localhost';  // Ganti 'localhost' dengan '127.0.0.1' atau nama service Docker jika menggunakan container
         $dbname = 'store';
         $username = 'root';    // Default MySQL root user
         $password = '';        // Jika tidak ada password, kosongkan
