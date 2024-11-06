@@ -18,10 +18,10 @@ jobs:
       uses: actions/checkout@v3
 
     # 2. Set up PHP versi 8.1 (sesuaikan dengan versi yang Anda pakai)
-    - name: Set up PHP
+    - name: Set up PHP 8.2
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1'  # Tentukan versi PHP yang digunakan
+        php-version: '8.2'  # Tentukan versi PHP yang digunakan
 
     # 3. Install Composer (jika menggunakan Composer untuk manajemen dependensi)
     - name: Install Composer
