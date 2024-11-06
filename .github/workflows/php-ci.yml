@@ -1,26 +1,42 @@
-name: PHP CI
+name: CI Workflow
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main  # Menjalankan saat ada perubahan pada branch main
+  pull_request:
+    branches:
+      - main  # Menjalankan saat ada pull request ke branch main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php-version: ['8.1']
+  phpunit:
+    runs-on: ubuntu-latest  # Menentukan bahwa job akan dijalankan di lingkungan Ubuntu
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    # 1. Checkout kode dari repositori
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
+    # 2. Set up PHP versi 8.1 (sesuaikan dengan versi yang Anda pakai)
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'  # Tentukan versi PHP yang digunakan
 
-      - name: Install dependencies
-        run: composer install
+    # 3. Install Composer (jika menggunakan Composer untuk manajemen dependensi)
+    - name: Install Composer
+      run: |
+        curl -sS https://getcomposer.org/installer | php
+        mv composer.phar /usr/local/bin/composer
 
-      - name: Run tests
-        run: vendor/bin/phpunit
+    # 4. Install dependensi proyek menggunakan Composer
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-interaction
+
+    # 5. Jalankan PHPUnit untuk pengujian
+    - name: Run PHPUnit tests
+      run: vendor/bin/phpunit --testdox  # Jalankan PHPUnit, pastikan PHPUnit diinstal lewat Composer
+
+    # 6. Menampilkan pesan setelah CI selesai
+    - name: Display CI result
+      run: echo "CI pipeline completed successfully."
