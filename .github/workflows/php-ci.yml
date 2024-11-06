@@ -27,7 +27,6 @@ jobs:
           --health-interval=5s
           --health-timeout=5s
           --health-retries=3
-          --bind-address=0.0.0.0  # Mengizinkan koneksi dari semua alamat IP
 
     steps:
     # 1. Checkout kode dari repositori
