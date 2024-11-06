@@ -16,6 +16,7 @@ jobs:
       mysql:
         image: mysql:8
         env:
+          MYSQL_ROOT_PASSWORD: ""
           MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # Kosongkan jika tidak pakai password
           MYSQL_DATABASE: store
         ports:
