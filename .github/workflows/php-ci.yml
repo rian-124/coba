@@ -49,11 +49,16 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-interaction
 
-    # 5. Set execute permission untuk PHPUnit
+    # 5. Membuat Tabel di MySQL sebelum pengujian
+    - name: Create customers table
+      run: |
+        mysql -h 127.0.0.1 -u root -prootpassword store -e "CREATE TABLE IF NOT EXISTS customers (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+
+    # 6. Set execute permission untuk PHPUnit
     - name: Set execute permission for PHPUnit
       run: chmod +x vendor/bin/phpunit
 
-    # 6. Jalankan PHPUnit
+    # 7. Jalankan PHPUnit
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit --testdox
       env:
@@ -62,6 +67,6 @@ jobs:
         DB_USERNAME: root
         DB_PASSWORD: ""  # Kosongkan jika tidak pakai password
 
-    # 7. Menampilkan pesan setelah CI selesai
+    # 8. Menampilkan pesan setelah CI selesai
     - name: Display CI result
       run: echo "CI pipeline completed successfully."
