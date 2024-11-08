@@ -52,7 +52,11 @@ jobs:
 
     # Tunggu beberapa detik agar MySQL siap
     - name: Wait for MySQL to be ready
-      run: sleep 30  # Tunggu 30 detik sebelum menjalankan perintah SQL
+      run: |
+        until mysql -h 127.0.0.1 -u root -e "SELECT 1" store; do
+          echo "Waiting for MySQL to be ready..."
+          sleep 5
+        done
 
     # 5. Membuat Tabel di MySQL sebelum pengujian
     - name: Create customers table
@@ -67,7 +71,7 @@ jobs:
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit --testdox
       env:
-        DB_HOST: localhost # Gunakan IP kontainer MySQL
+        DB_HOST: 127.0.0.1 # Gunakan IP kontainer MySQL
         DB_DATABASE: store
         DB_USERNAME: root
         DB_PASSWORD: ""  # Kosongkan jika tidak pakai password
