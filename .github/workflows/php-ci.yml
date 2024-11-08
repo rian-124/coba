@@ -1,26 +1,74 @@
-name: PHP CI
+name: CI Workflow
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main  # Menjalankan saat ada perubahan pada branch main
+  pull_request:
+    branches:
+      - main  # Menjalankan saat ada pull request ke branch main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  phpunit:
+    runs-on: ubuntu-latest  # Menentukan bahwa job akan dijalankan di lingkungan Ubuntu
 
-    strategy:
-      matrix:
-        php-version: ['8.1']
-
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: ""
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"  # Kosongkan jika tidak pakai password
+          MYSQL_DATABASE: store
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-start-period=30s
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=3
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    # 1. Checkout kode dari repositori
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
+    # 2. Set up PHP versi 8.2
+    - name: Set up PHP 8.2
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, pdo, pdo_mysql
 
-      - name: Install dependencies
-        run: composer install
+    # 3. Install Composer
+    - name: Install Composer
+      run: |
+        curl -sS https://getcomposer.org/installer | php
+        mv composer.phar /usr/local/bin/composer
+    # 4. Install dependensi proyek menggunakan Composer
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-interaction
 
-      - name: Run tests
-        run: vendor/bin/phpunit
+    # Tunggu beberapa detik agar MySQL siap
+    - name: Wait for MySQL to be ready
+      run: sleep 30  # Tunggu 30 detik sebelum menjalankan perintah SQL
+
+    # 5. Membuat Tabel di MySQL sebelum pengujian
+    - name: Create customers table
+      run: |
+        mysql -h 127.0.0.1 -u root store -e "CREATE TABLE IF NOT EXISTS customers (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+    # 6. Set execute permission untuk PHPUnit
+    - name: Set execute permission for PHPUnit
+      run: chmod +x vendor/bin/phpunit
+
+    # 7. Jalankan PHPUnit
+    - name: Run PHPUnit tests
+      run: vendor/bin/phpunit --testdox
+      env:
+        DB_HOST: 127.0.0.1  # Gunakan IP kontainer MySQL
+        DB_DATABASE: store
+        DB_USERNAME: root
+        DB_PASSWORD: ""  # Kosongkan jika tidak pakai password
+
+    # 8. Menampilkan pesan setelah CI selesai
+    - name: Display CI result
+      run: echo "CI pipeline completed successfully."
