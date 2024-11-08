@@ -48,7 +48,7 @@ class Ordr {
             // Kurangi stok jika cukup
             $inventory->addStock($itemId, -$quantityOrdered);
         } else {
-            // Anda bisa menambahkan logika untuk menangani jika stok tidak cukup
+            // jika stok tidak cukup
             echo "Stok tidak cukup untuk item ID: $itemId. Tersedia: $currentQuantity, Diminta: $quantityOrdered.";
         }
     }
