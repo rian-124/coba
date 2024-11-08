@@ -61,7 +61,17 @@ jobs:
     # 5. Membuat Tabel di MySQL sebelum pengujian
     - name: Create customers table
       run: |
-        mysql -h 127.0.0.1 -u root store -e "CREATE TABLE IF NOT EXISTS customers (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+        mysql -h 127.0.0.1 -u root store -e "
+          CREATE TABLE IF NOT EXISTS customers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            address VARCHAR(255) NOT NULL,
+            phone VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+        "
+
 
     # 6. Set execute permission untuk PHPUnit
     - name: Set execute permission for PHPUnit
