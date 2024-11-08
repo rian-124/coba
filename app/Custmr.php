@@ -1,7 +1,5 @@
 <?php
 namespace App;
-
-require_once 'DBConnection.php';
 // Customer class
 class Custmr {
     public $id;

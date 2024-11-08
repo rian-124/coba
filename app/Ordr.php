@@ -1,8 +1,7 @@
 <?php
 
-use App\DBConnection;
-use App\Inv;
-require_once "DBConnection.php";
+namespace App;
+
 
 // class Order
 class Ordr {
@@ -61,7 +60,7 @@ class Ordr {
         $stmt = $db->prepare($query);
         $stmt->bindParam(':item_id', $itemId);
         $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
     
         return $result ? $result['quantity'] : 0; // Kembalikan quantity jika ada, atau 0 jika tidak ada
     }

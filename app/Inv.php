@@ -2,8 +2,6 @@
 
 namespace App;
 
-require_once 'DBConnection.php';
-
 // class inventory
 class Inv {
 

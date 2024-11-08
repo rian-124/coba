@@ -1,27 +1,21 @@
 <?php
 
+require '../vendor/autoload.php';
+
 use App\Custmr; 
 use App\Inv;
-require_once "Custmr.php";
-require_once "Ordr.php";
-require_once "Inv.php";
+use App\Ordr;
 
 $customer = new Custmr(1, "Joko Raswono", "Lohbener Lama 8", "1235467809");
 $customer->saveCustomerDataToDatabase();
 
-
 $dataInv = new Inv();
 $getAllDataInv = $dataInv->getAllInv();
-
 
 foreach($getAllDataInv as $data) {
     echo "Item Id : " . $data['item_id']. "<br>";
     echo "Jumlah Quantity : " . $data['quantity']. "<br><br>";
 }
-
-// $inventory = new Inv();
-// // $inventory->addItem(101, 200);
-// // $inventory->addItem(102, 200);
 
 $order = new Ordr();
 $order->orderId = null;
