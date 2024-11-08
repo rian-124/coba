@@ -67,7 +67,7 @@ jobs:
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit --testdox
       env:
-        DB_HOST: 127.0.0.1  # Gunakan IP kontainer MySQL
+        DB_HOST: localhost # Gunakan IP kontainer MySQL
         DB_DATABASE: store
         DB_USERNAME: root
         DB_PASSWORD: ""  # Kosongkan jika tidak pakai password
