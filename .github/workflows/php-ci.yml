@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main  # Menjalankan saat ada perubahan pada branch main
+      - Afrian-branch  # Menambahkan branch baru yang ingin dipantau
   pull_request:
     branches:
       - main  # Menjalankan saat ada pull request ke branch main
+      - Afrian-branch  # Menambahkan branch baru yang ingin dipantau
 
 jobs:
   phpunit:
@@ -58,14 +60,14 @@ jobs:
           sleep 5
         done
 
-    # 5. Install PHP_CodeSniffer
+    # 5. Install PHP_CodeSniffer untuk linting
     - name: Install PHP_CodeSniffer
       run: |
         composer require --dev squizlabs/php_codesniffer
 
-    # 6. Run PHP_CodeSniffer for linting
+    # 6. Jalankan PHP_CodeSniffer untuk linting
     - name: Run PHP_CodeSniffer
-      run: vendor/bin/phpcs --standard=PSR12 --extensions=php src/
+      run: vendor/bin/phpcs --standard=PSR12 --extensions=php app/
 
     # 7. Membuat Tabel di MySQL sebelum pengujian
     - name: Create customers table
@@ -80,16 +82,15 @@ jobs:
           );
         "
 
-
     # 8. Set execute permission untuk PHPUnit
     - name: Set execute permission for PHPUnit
       run: chmod +x vendor/bin/phpunit
 
-    # 9. Jalankan PHPUnit
+    # 9. Jalankan PHPUnit untuk testing
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit --testdox
       env:
-        DB_HOST: 127.0.0.1 # Gunakan IP kontainer MySQL
+        DB_HOST: 127.0.0.1  # Gunakan IP kontainer MySQL
         DB_DATABASE: store
         DB_USERNAME: root
         DB_PASSWORD: ""  # Kosongkan jika tidak pakai password
