@@ -58,7 +58,16 @@ jobs:
           sleep 5
         done
 
-    # 5. Membuat Tabel di MySQL sebelum pengujian
+    # 5. Install PHP_CodeSniffer
+    - name: Install PHP_CodeSniffer
+      run: |
+        composer require --dev squizlabs/php_codesniffer
+
+    # 6. Run PHP_CodeSniffer for linting
+    - name: Run PHP_CodeSniffer
+      run: vendor/bin/phpcs --standard=PSR12 --extensions=php src/
+
+    # 7. Membuat Tabel di MySQL sebelum pengujian
     - name: Create customers table
       run: |
         mysql -h 127.0.0.1 -u root store -e "
@@ -72,11 +81,11 @@ jobs:
         "
 
 
-    # 6. Set execute permission untuk PHPUnit
+    # 8. Set execute permission untuk PHPUnit
     - name: Set execute permission for PHPUnit
       run: chmod +x vendor/bin/phpunit
 
-    # 7. Jalankan PHPUnit
+    # 9. Jalankan PHPUnit
     - name: Run PHPUnit tests
       run: vendor/bin/phpunit --testdox
       env:
@@ -85,6 +94,6 @@ jobs:
         DB_USERNAME: root
         DB_PASSWORD: ""  # Kosongkan jika tidak pakai password
 
-    # 8. Menampilkan pesan setelah CI selesai
+    # 10. Menampilkan pesan setelah CI selesai
     - name: Display CI result
       run: echo "CI pipeline completed successfully."
